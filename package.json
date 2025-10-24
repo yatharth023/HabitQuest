@@ -1,6 +1,7 @@
 {
   "name": "habitquest",
   "private": true,
+    "homepage": "https://yatharth023.github.io/HabitQuest",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
