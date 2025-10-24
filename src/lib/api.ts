@@ -1,5 +1,6 @@
 const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5001/api'
 
+// API client for backend communication
 class ApiClient {
   private baseURL: string
   private token: string | null = null
