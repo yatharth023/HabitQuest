@@ -1,16 +1,18 @@
 {
   "name": "habitquest",
   "private": true,
-    "homepage": "https://yatharth023.github.io/HabitQuest",
-  "version": "1.0.0",  "type": "module",
-     "dev": "vite",
+  "homepage": "https://yatharth023.github.io/HabitQuest",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "server": "cd server && npm run dev",
     "db:generate": "cd server && npx prisma generate",
     "db:push": "cd server && npx prisma db push",
-    "db:studio": "cd server && npx prisma studio",
+    "db:studio": "cd server && npx prisma studio"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
