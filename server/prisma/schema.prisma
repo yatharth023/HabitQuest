@@ -1,0 +1,130 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  username  String?  @unique @db.VarChar(30)
+  level     Int      @default(1)
+  totalXp   Int      @default(0) @map("total_xp")
+  avatarUrl String?  @map("avatar_url")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  habits           Habit[]
+  habitCompletions HabitCompletion[]
+  userChallenges   UserChallenge[]
+  friendships      Friendship[] @relation("UserFriendships")
+  friendOf         Friendship[] @relation("FriendOf")
+  achievements     Achievement[]
+
+  @@map("users")
+}
+
+model Habit {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  name       String   @db.VarChar(100)
+  icon       String
+  frequency  Json     @default("{\"type\": \"daily\"}")
+  goalType   String   @default("check") @map("goal_type")
+  goalValue  Int?     @map("goal_value")
+  goalUnit   String?  @db.VarChar(50) @map("goal_unit")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  completions HabitCompletion[]
+
+  @@map("habits")
+}
+
+model HabitCompletion {
+  id         String   @id @default(uuid())
+  habitId    String   @map("habit_id")
+  userId     String   @map("user_id")
+  completedAt DateTime @default(now()) @map("completed_at")
+  xpEarned   Int      @default(10) @map("xp_earned")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, completedAt])
+  @@map("habit_completions")
+}
+
+model Challenge {
+  id           String   @id @default(uuid())
+  name         String
+  description  String
+  type         String
+  durationDays Int      @map("duration_days")
+  targetValue  Int      @map("target_value")
+  icon         String
+  xpReward     Int      @default(100) @map("xp_reward")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  // Relations
+  userChallenges UserChallenge[]
+
+  @@map("challenges")
+}
+
+model UserChallenge {
+  id            String     @id @default(uuid())
+  userId        String     @map("user_id")
+  challengeId   String     @map("challenge_id")
+  startedAt     DateTime   @default(now()) @map("started_at")
+  completedAt   DateTime?  @map("completed_at")
+  currentProgress Int      @default(0) @map("current_progress")
+  status        String     @default("active")
+  createdAt     DateTime   @default(now()) @map("created_at")
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, challengeId])
+  @@map("user_challenges")
+}
+
+model Friendship {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  friendId  String   @map("friend_id")
+  status    String   @default("pending")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user   User @relation("UserFriendships", fields: [userId], references: [id], onDelete: Cascade)
+  friend User @relation("FriendOf", fields: [friendId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, friendId])
+  @@map("friendships")
+}
+
+model Achievement {
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
+  achievementType String  @map("achievement_type")
+  unlockedAt     DateTime @default(now()) @map("unlocked_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("achievements")
+}
