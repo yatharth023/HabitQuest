@@ -223,3 +223,9 @@ This project is licensed under the MIT License.
 ## 📞 Support
 
 For support, please open an issue in the repository or contact the development team.
+
+
+## 🚀 Live Deployment
+
+- Frontend: https://yatharth023.github.io/HabitQuest
+- Backend API: https://habitquest-api.onrender.com/api
