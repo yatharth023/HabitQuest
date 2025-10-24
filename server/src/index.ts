@@ -15,19 +15,19 @@ const prisma = new PrismaClient();
 
 // Security middleware
 app.use(helmet());
-const allowed = ['http://localhost:3001', 'http://localhost:3000'];
+const allowed = [process.env.CLIENT_URL || 'http://localhost:3001', 'http://localhost:3001', 'http://localhost:3000', 'https://yatharth023.github.io'];
 app.use(cors({
   origin: (origin, cb) => {
     // allow no-origin (curl, same-origin server) or match list
     if (!origin || allowed.indexOf(origin) !== -1) return cb(null, true);
     cb(new Error('CORS not allowed'));
   },
-  credentials: true,            // if you send cookies or auth
+  credentials: true,  // if you send cookies or auth
   methods: ['GET','POST','PUT','DELETE','OPTIONS'],
   allowedHeaders: ['Content-Type','Authorization']
 }));
-
 app.options('*', cors());
+
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -63,7 +63,6 @@ app.use('*', (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
